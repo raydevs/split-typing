@@ -27,3 +27,17 @@
     transform: scale(1);
   }
 }
+
+.loading {
+  @apply flex items-center justify-center h-screen text-xl font-medium dark:text-white;
+}
+
+/* Estilos para el teclado en modo oscuro */
+.dark .key {
+  fill: #374151;
+  stroke: #4b5563;
+}
+
+.dark text {
+  fill: #f3f4f6;
+}

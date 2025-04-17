@@ -42,10 +42,10 @@ export const keyPositions = [
   { id: 35, x: 812, y: 161, label: "ESC", row: 2, finger: "pinky" },
 
   // Thumb Cluster
-  { id: 36, x: 224, y: 205, label: "MOUSE", row: 3, finger: "thumb" },
+  { id: 36, x: 220, y: 205, label: "MOUSE", row: 3, finger: "thumb" },
   { id: 37, x: 286, y: 213, label: "LSHFT", row: 3, finger: "thumb", rotate: 15 },
-  { id: 38, x: 351, y: 224, label: "RET", row: 3, finger: "thumb", rotate: 30, width: 52, height: 80 },
-  { id: 39, x: 489, y: 224, label: "SPACE", row: 3, finger: "thumb", rotate: -30, width: 52, height: 80 },
-  { id: 40, x: 554, y: 213, label: "-", row: 3, finger: "thumb", rotate: -15 },
-  { id: 41, x: 616, y: 205, label: "COPY", row: 3, finger: "thumb" }
+  { id: 38, x: 356, y: 224, label: "RET", row: 3, finger: "thumb", rotate: 30, width: 52, height: 80 },
+  { id: 39, x: 489, y: 250, label: "SPACE", row: 3, finger: "thumb", rotate: -30, width: 52, height: 80 },
+  { id: 40, x: 554, y: 223, label: "-", row: 3, finger: "thumb", rotate: -15 },
+  { id: 41, x: 620, y: 205, label: "COPY", row: 3, finger: "thumb" }
 ];

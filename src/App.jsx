@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { loadKeymap } from './utils/loadKeymap';
 import { parseZmk } from './utils/parseZmk';
 import CorneKeyboard from './components/CorneKeyboard';
+import { MoonIcon, SunIcon } from './components/Icons'; // Crea estos componentes
 
 export function App() {
   const [keymap, setKeymap] = useState(null);
   const [currentLayer, setCurrentLayer] = useState('default');
   const [pressedKeys, setPressedKeys] = useState([]);
+  const [darkMode, setDarkMode] = useState(false);
 
   // Cargar configuración al iniciar
   useEffect(() => {
@@ -30,30 +32,56 @@ export function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  if (!keymap) return <div>Cargando teclado...</div>;
+  // Aplicar tema oscuro
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [darkMode]);
+
+  if (!keymap) return <div className="loading">Cargando teclado...</div>;
 
   return (
-    <main>
-      <h1>Entrenador para Corne Keyboard</h1>
+    <div className={`min-h-screen ${darkMode ? 'dark bg-gray-900' : 'bg-gray-50'}`}>
+      {/* Header */}
+      <header className="sticky top-0 z-10 bg-white dark:bg-gray-800 shadow-md p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
+            SplitTyping
+          </h1>
 
-      <select
-        value={currentLayer}
-        onChange={(e) => setCurrentLayer(e.target.value)}
-      >
-        {Object.keys(keymap.layers).map(layer => (
-          <option key={layer} value={layer}>{layer}</option>
-        ))}
-      </select>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-yellow-300"
+            aria-label="Toggle dark mode"
+          >
+            {darkMode ? <SunIcon /> : <MoonIcon />}
+          </button>
+        </div>
+      </header>
 
-      <CorneKeyboard
-        pressedKeys={pressedKeys}
-        keymap={keymap}
-        currentLayer={currentLayer}
-      />
+      <main className="container mx-auto p-4">
+        <div className="mb-4 flex justify-between items-center">
+          <select
+            value={currentLayer}
+            onChange={(e) => setCurrentLayer(e.target.value)}
+            className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-gray-800 dark:text-white"
+          >
+            {Object.keys(keymap.layers).map(layer => (
+              <option key={layer} value={layer}>{layer}</option>
+            ))}
+          </select>
+        </div>
 
-      <div className="debug">
-        <pre>Layer actual: {currentLayer}</pre>
-      </div>
-    </main>
+        <CorneKeyboard
+          pressedKeys={pressedKeys}
+          keymap={keymap}
+          currentLayer={currentLayer}
+          darkMode={darkMode}
+        />
+      </main>
+    </div>
   );
 }
