@@ -41,3 +41,81 @@
 .dark text {
   fill: #f3f4f6;
 }
+
+.typing-level-display {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.level-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.stats {
+  font-family: monospace;
+}
+
+.typing-area {
+  font-size: 1.8rem;
+  line-height: 2.5rem;
+  min-height: 3rem;
+  font-family: 'Roboto Mono', monospace;
+  margin: 1rem 0;
+}
+
+.char {
+  transition: all 0.1s;
+}
+
+.char.correct {
+  color: var(--color-correct);
+}
+
+.char.incorrect {
+  color: var(--color-error);
+  text-decoration: underline;
+}
+
+.char.current {
+  background: var(--color-current);
+  border-radius: 3px;
+}
+
+.target-keys {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.target-keys kbd {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: var(--bg-key);
+  font-family: monospace;
+}
+
+.target-keys kbd.active {
+  background: var(--color-correct);
+  color: white;
+}
+
+/* Temas */
+:root {
+  --color-correct: #10b981;
+  --color-error: #ef4444;
+  --color-current: rgba(59, 130, 246, 0.2);
+  --bg-key: #e2e8f0;
+  --bg-secondary: #f8fafc;
+}
+
+.dark {
+  --color-correct: #34d399;
+  --color-error: #f87171;
+  --color-current: rgba(96, 165, 250, 0.3);
+  --bg-key: #374151;
+  --bg-secondary: #1f2937;
+}
