@@ -1,0 +1,61 @@
+.typing-level-display {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.level-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.stats {
+  font-family: monospace;
+}
+
+.typing-area {
+  text-align: center;
+  font-size: 1.8rem;
+  line-height: 2.5rem;
+  min-height: 3rem;
+  font-family: 'Roboto Mono', monospace;
+  margin: 1rem 0;
+}
+
+.char {
+  transition: all 0.1s;
+}
+
+.char.correct {
+  color: var(--color-correct);
+}
+
+.char.incorrect {
+  color: var(--color-error);
+  text-decoration: underline;
+}
+
+.char.current {
+  background: var(--color-current);
+  border-radius: 3px;
+}
+
+.target-keys {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.target-keys kbd {
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  background: var(--bg-key);
+  font-family: monospace;
+}
+
+.target-keys kbd.active {
+  background: var(--color-correct);
+  color: white;
+}

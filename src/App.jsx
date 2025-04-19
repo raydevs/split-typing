@@ -2,13 +2,20 @@ import { useState, useEffect } from 'react';
 import { loadKeymap } from './utils/loadKeymap';
 import { parseZmk } from './utils/parseZmk';
 import CorneKeyboard from './components/CorneKeyboard';
-import { MoonIcon, SunIcon } from './components/Icons'; // Crea estos componentes
+import { MoonIcon, SunIcon } from './components/Icons';
+import TypingLevelDisplay from './components/TypingLevelDisplay';
+import LevelCompleteModal from './components/Level/LevelCompleteModal';
+import { levels } from './data/levels';
 
 export function App() {
   const [keymap, setKeymap] = useState(null);
   const [currentLayer, setCurrentLayer] = useState('default');
   const [pressedKeys, setPressedKeys] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
+
+  const [currentLevel, setLevelIndex] = useState(0)
+  const [showModal, setShowModal] = useState(false);
+  const [levelResults, setLevelResults] = useState(null);
 
   // Cargar configuración al iniciar
   useEffect(() => {
@@ -40,6 +47,26 @@ export function App() {
       document.documentElement.classList.remove('dark');
     }
   }, [darkMode]);
+
+  const handleLevelComplete = (results) => {
+    console.log(`Nivel completado! WPM: ${results.wpm}, Precisión: ${results.accuracy}%`);
+    setLevelResults(results); // Guardar resultados
+    setShowModal(true); // Mostrar modal
+  };
+
+  const handleNextLevel = () => {
+    setShowModal(false); // Ocultar modal
+    setLevelIndex((prevIndex) => {
+      const nextIndex = prevIndex + 1;
+      if (nextIndex < levels.length) {
+        console.log(`Avanzando al nivel ${nextIndex}`);
+        return nextIndex;
+      } else {
+        console.log('¡Todos los niveles completados!');
+        return prevIndex;
+      }
+    });
+  };
 
   if (!keymap) return <div className="loading">Cargando teclado...</div>;
 
@@ -74,6 +101,21 @@ export function App() {
             ))}
           </select>
         </div>
+
+        <div>
+          {showModal && (
+            <LevelCompleteModal
+              results={levelResults}
+              onNextLevel={handleNextLevel}
+            />
+          )}
+        </div>
+
+        <TypingLevelDisplay
+          level={levels[currentLevel]}
+          onComplete={handleLevelComplete}
+          darkMode={darkMode}
+        />
 
         <CorneKeyboard
           pressedKeys={pressedKeys}
