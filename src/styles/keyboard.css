@@ -17,6 +17,18 @@
   animation: pulse 0.2s;
 }
 
+.key-expected {
+  fill: #3b82f6;
+  /* Azul para la tecla esperada */
+  stroke: #2563eb;
+}
+
+.key-error {
+  fill: #ef4444;
+  stroke: #b91c1c;
+  animation: shake 0.3s ease-in-out;
+}
+
 @keyframes pulse {
   0% {
     transform: scale(1);
@@ -28,6 +40,23 @@
 
   100% {
     transform: scale(1);
+  }
+}
+
+/* Animación de error */
+@keyframes shake {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-2px);
+  }
+
+  75% {
+    transform: translateX(2px);
   }
 }
 

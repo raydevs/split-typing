@@ -13,9 +13,14 @@ export function App() {
   const [pressedKeys, setPressedKeys] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
 
-  const [currentLevel, setLevelIndex] = useState(0)
+  const [currentLevel, setLevelIndex] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [levelResults, setLevelResults] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
+
+  const [typedText, setTypedText] = useState('');
+  const targetText = levels[currentLevel]?.textSamples[0] || '';
+  const expectedKey = targetText[typedText.length]?.toLowerCase() || '';
 
   // Cargar configuración al iniciar
   useEffect(() => {
@@ -25,19 +30,34 @@ export function App() {
       .catch(console.error);
   }, []);
 
-  // Manejar pulsaciones de teclas
   useEffect(() => {
     const handleKeyDown = (e) => {
-      const key = e.key.toLowerCase();
-      setPressedKeys(prev => [...prev, key]);
-      setTimeout(() => {
-        setPressedKeys(prev => prev.filter(k => k !== key));
-      }, 200);
+      const key = e.code === 'Space' ? 'space' : e.key.toLowerCase();
+
+      // Normalizar expectedKey para manejar espacios
+      const normalizedExpectedKey = expectedKey === ' ' ? 'space' : expectedKey;
+
+      // Actualizar las teclas presionadas
+      setPressedKeys((prev) => [...prev, key]);
+
+      // Validar la tecla presionada
+      if (key === normalizedExpectedKey) {
+        // Procesar la tecla correcta después de un pequeño retraso
+        setTimeout(() => {
+          setTypedText((prev) => prev + (normalizedExpectedKey === 'space' ? ' ' : key)); // Agregar la tecla al texto escrito
+          setPressedKeys((prev) => prev.filter((k) => k !== key)); // Eliminar la tecla presionada
+        }, 100); // Retraso para permitir que el estado se actualice correctamente
+      } else {
+        // Si la tecla es incorrecta, eliminarla después de un tiempo
+        setTimeout(() => {
+          setPressedKeys((prev) => prev.filter((k) => k !== key));
+        }, 200);
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [expectedKey]);
 
   // Aplicar tema oscuro
   useEffect(() => {
@@ -56,6 +76,7 @@ export function App() {
 
   const handleNextLevel = () => {
     setShowModal(false); // Ocultar modal
+    setTypedText(''); // Reiniciar texto escrito
     setLevelIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
       if (nextIndex < levels.length) {
@@ -66,6 +87,12 @@ export function App() {
         return prevIndex;
       }
     });
+  };
+
+  const handleRetryLevel = () => {
+    setShowModal(false); // Ocultar modal
+    setTypedText(''); // Reiniciar texto escrito
+    setRetryCount((prev) => prev + 1); // Incrementar el contador de reintentos
   };
 
   if (!keymap) return <div className="loading">Cargando teclado...</div>;
@@ -96,8 +123,10 @@ export function App() {
             onChange={(e) => setCurrentLayer(e.target.value)}
             className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-gray-800 dark:text-white"
           >
-            {Object.keys(keymap.layers).map(layer => (
-              <option key={layer} value={layer}>{layer}</option>
+            {Object.keys(keymap.layers).map((layer) => (
+              <option key={layer} value={layer}>
+                {layer}
+              </option>
             ))}
           </select>
         </div>
@@ -107,11 +136,13 @@ export function App() {
             <LevelCompleteModal
               results={levelResults}
               onNextLevel={handleNextLevel}
+              onRetryLevel={handleRetryLevel}
             />
           )}
         </div>
 
         <TypingLevelDisplay
+          key={`${currentLevel}-${retryCount}`} // Clave única para forzar el reinicio
           level={levels[currentLevel]}
           onComplete={handleLevelComplete}
           darkMode={darkMode}
@@ -122,6 +153,7 @@ export function App() {
           keymap={keymap}
           currentLayer={currentLayer}
           darkMode={darkMode}
+          expectedKey={expectedKey}
         />
       </main>
     </div>

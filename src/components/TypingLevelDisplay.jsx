@@ -24,13 +24,13 @@ export default function TypingLevelDisplay({
 
   // Calcula WPM
   useEffect(() => {
-    if (typedText.length === 1) setStartTime(Date.now());
-    if (typedText.length === targetText.length && startTime) {
-      const minutes = (Date.now() - startTime) / 60000;
-      const words = targetText.length / 5;
-      setWpm(Math.round(words / minutes));
+    if (typedText.length === 1) setStartTime(Date.now()); // Inicia el tiempo al escribir el primer carácter
+    if (typedText.length > 0 && startTime) {
+      const minutes = (Date.now() - startTime) / 60000; // Tiempo transcurrido en minutos
+      const words = typedText.length / 5; // Palabras basadas en caracteres escritos correctamente
+      setWpm(Math.round(words / minutes)); // Calcula WPM dinámicamente
     }
-  }, [typedText, targetText, startTime]);
+  }, [typedText, startTime]);
 
   // Manejo de teclado
   useEffect(() => {
