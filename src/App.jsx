@@ -22,6 +22,9 @@ export function App() {
   const targetText = levels[currentLevel]?.textSamples[0] || '';
   const expectedKey = targetText[typedText.length]?.toLowerCase() || '';
 
+  const [correctKeyCount, setCorrectKeyCount] = useState(0);
+  const [totalKeyCount, setTotalKeyCount] = useState(0);
+
   // Cargar configuración al iniciar
   useEffect(() => {
     loadKeymap()
@@ -40,8 +43,14 @@ export function App() {
       // Actualizar las teclas presionadas
       setPressedKeys((prev) => [...prev, key]);
 
+      // Incrementar el contador total de teclas presionadas
+      setTotalKeyCount((prev) => prev + 1);
+
       // Validar la tecla presionada
       if (key === normalizedExpectedKey) {
+        // Incrementar el contador de teclas correctas
+        setCorrectKeyCount((prev) => prev + 1);
+
         // Procesar la tecla correcta después de un pequeño retraso
         setTimeout(() => {
           setTypedText((prev) => prev + (normalizedExpectedKey === 'space' ? ' ' : key)); // Agregar la tecla al texto escrito
@@ -69,14 +78,19 @@ export function App() {
   }, [darkMode]);
 
   const handleLevelComplete = (results) => {
+    const precision = totalKeyCount > 0 ? (correctKeyCount / totalKeyCount) * 100 : 0;
+    results.accuracy = precision.toFixed(2);
+
     console.log(`Nivel completado! WPM: ${results.wpm}, Precisión: ${results.accuracy}%`);
-    setLevelResults(results); // Guardar resultados
+    setLevelResults(results); // Guardar resultados con precisión
     setShowModal(true); // Mostrar modal
   };
 
   const handleNextLevel = () => {
     setShowModal(false); // Ocultar modal
     setTypedText(''); // Reiniciar texto escrito
+    setCorrectKeyCount(0); // Reiniciar contador de teclas correctas
+    setTotalKeyCount(0); // Reiniciar contador total de teclas
     setLevelIndex((prevIndex) => {
       const nextIndex = prevIndex + 1;
       if (nextIndex < levels.length) {
@@ -92,6 +106,8 @@ export function App() {
   const handleRetryLevel = () => {
     setShowModal(false); // Ocultar modal
     setTypedText(''); // Reiniciar texto escrito
+    setCorrectKeyCount(0); // Reiniciar contador de teclas correctas
+    setTotalKeyCount(0); // Reiniciar contador total de teclas
     setRetryCount((prev) => prev + 1); // Incrementar el contador de reintentos
   };
 
