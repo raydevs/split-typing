@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
+import LevelProgress from './LevelProgress';
 
-export default function LevelCompleteModal({ results, onNextLevel, onRetryLevel }) {
-  const { wpm, accuracy, perfect } = results;
+export default function LevelCompleteModal({ results, levels, onNextLevel, onRetryLevel }) {
+
   const nextLevelButtonRef = useRef(null);
 
   useEffect(() => {
@@ -16,10 +17,11 @@ export default function LevelCompleteModal({ results, onNextLevel, onRetryLevel 
       <div className="modal-content">
         <h2>¡Nivel Completado!</h2>
         <div className="results">
-          <p>WPM: <span>{wpm}</span></p>
-          <p>Precisión: <span>{accuracy}%</span></p>
-          <p>{perfect ? "¡Perfecto!" : "¡Buen trabajo!"}</p>
+          <p>WPM: <span>{results.wpm}</span></p>
+          <p>Precisión: <span>{results.accuracy}%</span></p>
+          <p>{results.perfect ? "¡Perfecto!" : "¡Buen trabajo!"}</p>
         </div>
+        <LevelProgress currentLevel={results.currentLevel} levels={levels} />
         <div className="modal-buttons">
           <button onClick={onRetryLevel} className="retry-level-button">
             Reintentar nivel

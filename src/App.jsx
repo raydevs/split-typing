@@ -13,19 +13,23 @@ export function App() {
   const [pressedKeys, setPressedKeys] = useState([]);
   const [darkMode, setDarkMode] = useState(false);
 
-  const [currentLevel, setLevelIndex] = useState(0);
+  // Start with the first level in the "home" group
+  const [currentGroup, setCurrentGroup] = useState('home');
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
+  const currentLevel = levels[currentGroup][currentLevelIndex];
+
   const [showModal, setShowModal] = useState(false);
   const [levelResults, setLevelResults] = useState(null);
   const [retryCount, setRetryCount] = useState(0);
 
   const [typedText, setTypedText] = useState('');
-  const targetText = levels[currentLevel]?.textSamples[0] || '';
+  const targetText = currentLevel?.textSamples[0] || '';
   const expectedKey = targetText[typedText.length]?.toLowerCase() || '';
 
   const [correctKeyCount, setCorrectKeyCount] = useState(0);
   const [totalKeyCount, setTotalKeyCount] = useState(0);
 
-  // Cargar configuración al iniciar
+  // Load keymap on initialization
   useEffect(() => {
     loadKeymap()
       .then(parseZmk)
@@ -37,27 +41,27 @@ export function App() {
     const handleKeyDown = (e) => {
       const key = e.code === 'Space' ? 'space' : e.key.toLowerCase();
 
-      // Normalizar expectedKey para manejar espacios
+      // Normalize expectedKey for spaces
       const normalizedExpectedKey = expectedKey === ' ' ? 'space' : expectedKey;
 
-      // Actualizar las teclas presionadas
+      // Update pressed keys
       setPressedKeys((prev) => [...prev, key]);
 
-      // Incrementar el contador total de teclas presionadas
+      // Increment total key count
       setTotalKeyCount((prev) => prev + 1);
 
-      // Validar la tecla presionada
+      // Validate the pressed key
       if (key === normalizedExpectedKey) {
-        // Incrementar el contador de teclas correctas
+        // Increment correct key count
         setCorrectKeyCount((prev) => prev + 1);
 
-        // Procesar la tecla correcta después de un pequeño retraso
+        // Process correct key after a small delay
         setTimeout(() => {
-          setTypedText((prev) => prev + (normalizedExpectedKey === 'space' ? ' ' : key)); // Agregar la tecla al texto escrito
-          setPressedKeys((prev) => prev.filter((k) => k !== key)); // Eliminar la tecla presionada
-        }, 100); // Retraso para permitir que el estado se actualice correctamente
+          setTypedText((prev) => prev + (normalizedExpectedKey === 'space' ? ' ' : key));
+          setPressedKeys((prev) => prev.filter((k) => k !== key));
+        }, 100);
       } else {
-        // Si la tecla es incorrecta, eliminarla después de un tiempo
+        // Remove incorrect key after a small delay
         setTimeout(() => {
           setPressedKeys((prev) => prev.filter((k) => k !== key));
         }, 200);
@@ -68,47 +72,36 @@ export function App() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [expectedKey]);
 
-  // Aplicar tema oscuro
-  useEffect(() => {
-    if (darkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [darkMode]);
-
   const handleLevelComplete = (results) => {
     const precision = totalKeyCount > 0 ? (correctKeyCount / totalKeyCount) * 100 : 0;
     results.accuracy = precision.toFixed(2);
+    results.currentLevel = currentLevel;
+    results.totalLevels = levels[currentGroup].length;
 
     console.log(`Nivel completado! WPM: ${results.wpm}, Precisión: ${results.accuracy}%`);
-    setLevelResults(results); // Guardar resultados con precisión
-    setShowModal(true); // Mostrar modal
+    setLevelResults(results);
+    setShowModal(true);
   };
 
   const handleNextLevel = () => {
-    setShowModal(false); // Ocultar modal
-    setTypedText(''); // Reiniciar texto escrito
-    setCorrectKeyCount(0); // Reiniciar contador de teclas correctas
-    setTotalKeyCount(0); // Reiniciar contador total de teclas
-    setLevelIndex((prevIndex) => {
-      const nextIndex = prevIndex + 1;
-      if (nextIndex < levels.length) {
-        console.log(`Avanzando al nivel ${nextIndex}`);
-        return nextIndex;
-      } else {
-        console.log('¡Todos los niveles completados!');
-        return prevIndex;
-      }
-    });
+    setShowModal(false);
+    setTypedText('');
+    setCorrectKeyCount(0);
+    setTotalKeyCount(0);
+
+    if (currentLevelIndex + 1 < levels[currentGroup].length) {
+      setCurrentLevelIndex((prev) => prev + 1);
+    } else {
+      console.log('¡Todos los niveles completados en este grupo!');
+    }
   };
 
   const handleRetryLevel = () => {
-    setShowModal(false); // Ocultar modal
-    setTypedText(''); // Reiniciar texto escrito
-    setCorrectKeyCount(0); // Reiniciar contador de teclas correctas
-    setTotalKeyCount(0); // Reiniciar contador total de teclas
-    setRetryCount((prev) => prev + 1); // Incrementar el contador de reintentos
+    setShowModal(false);
+    setTypedText('');
+    setCorrectKeyCount(0);
+    setTotalKeyCount(0);
+    setRetryCount((prev) => prev + 1);
   };
 
   if (!keymap) return <div className="loading">Cargando teclado...</div>;
@@ -151,6 +144,7 @@ export function App() {
           {showModal && (
             <LevelCompleteModal
               results={levelResults}
+              levels={levels[currentGroup]}
               onNextLevel={handleNextLevel}
               onRetryLevel={handleRetryLevel}
             />
@@ -158,8 +152,8 @@ export function App() {
         </div>
 
         <TypingLevelDisplay
-          key={`${currentLevel}-${retryCount}`} // Clave única para forzar el reinicio
-          level={levels[currentLevel]}
+          level={currentLevel}
+          levels={levels[currentGroup]}
           onComplete={handleLevelComplete}
           darkMode={darkMode}
         />

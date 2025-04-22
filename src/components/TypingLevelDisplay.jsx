@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import LevelProgress from './Level/LevelProgress';
 
 export default function TypingLevelDisplay({
   level,
+  levels,
   onComplete,
   darkMode = false
 }) {
@@ -83,6 +85,8 @@ export default function TypingLevelDisplay({
           <span>Precisión: {calculateAccuracy(typedText, targetText)}%</span>
         </div>
       </div>
+
+      <LevelProgress currentLevel={level} levels={levels} />
 
       {/* Área de texto interactiva */}
       <div className="typing-area">
