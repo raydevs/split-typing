@@ -116,7 +116,10 @@ export function App() {
           </h1>
 
           <button
-            onClick={() => setDarkMode(!darkMode)}
+            onClick={(e) => {
+              setDarkMode(!darkMode);
+              e.target.blur(); // Remove focus from the button
+            }}
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-yellow-300"
             aria-label="Toggle dark mode"
           >
@@ -126,20 +129,6 @@ export function App() {
       </header>
 
       <main className="container mx-auto p-4">
-        <div className="mb-4 flex justify-between items-center">
-          <select
-            value={currentLayer}
-            onChange={(e) => setCurrentLayer(e.target.value)}
-            className="bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded px-3 py-2 text-gray-800 dark:text-white"
-          >
-            {Object.keys(keymap.layers).map((layer) => (
-              <option key={layer} value={layer}>
-                {layer}
-              </option>
-            ))}
-          </select>
-        </div>
-
         <div>
           {showModal && (
             <LevelCompleteModal

@@ -3,6 +3,11 @@
   border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
+  color: var(--text-color-light, #333);
+}
+
+.typing-level-display.dark {
+  color: var(--text-color-dark, #e5e5e5);
 }
 
 .level-header {
@@ -22,6 +27,7 @@
   min-height: 3rem;
   font-family: 'Roboto Mono', monospace;
   margin: 1rem 0;
+
 }
 
 .char {
@@ -42,10 +48,23 @@
   border-radius: 3px;
 }
 
+.target-keys-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .target-keys {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+.stats {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
 }
 
 .target-keys kbd {
@@ -58,4 +77,56 @@
 .target-keys kbd.active {
   background: var(--color-correct);
   color: white;
+}
+
+.level-progress {
+  margin-top: 1rem;
+  font-family: Arial, sans-serif;
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.progress-bar {
+  position: relative;
+  height: 10px;
+  background-color: #e0e0e0;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: #4caf50;
+  transition: width 0.3s ease;
+}
+
+.level-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.level-item {
+  padding: 0.3rem 0.6rem;
+  border-radius: 3px;
+  background-color: #f0f0f0;
+  font-size: 0.8rem;
+  color: #333;
+}
+
+.level-item.completed {
+  background-color: #4caf50;
+  color: white;
+}
+
+.level-item.current {
+  background-color: #ff9800;
+  color: white;
+  font-weight: bold;
 }

@@ -25,12 +25,17 @@ export default function TypingLevelDisplay({
   }, [typedText, targetText, wpm, onComplete, levelCompleted]);
 
   // Calcula WPM
+  // Calcula WPM
   useEffect(() => {
     if (typedText.length === 1) setStartTime(Date.now()); // Inicia el tiempo al escribir el primer carácter
     if (typedText.length > 0 && startTime) {
-      const minutes = (Date.now() - startTime) / 60000; // Tiempo transcurrido en minutos
-      const words = typedText.length / 5; // Palabras basadas en caracteres escritos correctamente
-      setWpm(Math.round(words / minutes)); // Calcula WPM dinámicamente
+      const elapsedTime = (Date.now() - startTime) / 60000; // Tiempo transcurrido en minutos
+      if (elapsedTime > 0) { // Asegurarse de que el tiempo transcurrido sea mayor que 0
+        const words = typedText.length / 5; // Palabras basadas en caracteres escritos correctamente
+        setWpm(Math.round(words / elapsedTime)); // Calcula WPM dinámicamente
+      } else {
+        setWpm(0); // Si el tiempo es demasiado pequeño, muestra 0 WPM
+      }
     }
   }, [typedText, startTime]);
 
@@ -38,6 +43,11 @@ export default function TypingLevelDisplay({
   useEffect(() => {
     const handleKeyDown = (e) => {
       const expectedChar = targetText[typedText.length];
+
+      // Prevent space key from triggering default actions (like button clicks)
+      if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+      }
 
       if (e.key === expectedChar) {
         setTypedText(prev => prev + e.key);
@@ -77,15 +87,6 @@ export default function TypingLevelDisplay({
 
   return (
     <div className={`typing-level-display ${darkMode ? 'dark' : ''}`}>
-      {/* Encabezado del nivel */}
-      <div className="level-header">
-        <h2>{level.name}</h2>
-        <div className="stats">
-          <span>WPM: {wpm}</span>
-          <span>Precisión: {calculateAccuracy(typedText, targetText)}%</span>
-        </div>
-      </div>
-
       <LevelProgress currentLevel={level} levels={levels} />
 
       {/* Área de texto interactiva */}
@@ -109,12 +110,20 @@ export default function TypingLevelDisplay({
       </div>
 
       {/* Teclas objetivo */}
-      <div className="target-keys">
-        {level.targetKeys?.map(key => (
-          <kbd key={key} className={`key ${typedText.includes(key) ? 'active' : ''}`}>
-            {key.toUpperCase()}
-          </kbd>
-        ))}
+      <div className="target-keys-row">
+        <div className="target-keys">
+          {level.targetKeys?.map((key) => (
+            <kbd key={key} className={`key ${typedText.includes(key) ? 'active' : ''}`}>
+              {key.toUpperCase()}
+            </kbd>
+          ))}
+        </div>
+        {wpm > 0 && ( // Mostrar estadísticas solo si el usuario ha comenzado a escribir
+          <div className="stats">
+            <span>Speed: {wpm}wpm</span>
+            <span>Accuracy: {calculateAccuracy(typedText, targetText)}%</span>
+          </div>
+        )}
       </div>
     </div>
   );

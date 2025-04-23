@@ -6,7 +6,6 @@ export default function LevelCompleteModal({ results, levels, onNextLevel, onRet
   const nextLevelButtonRef = useRef(null);
 
   useEffect(() => {
-    // Poner el foco en el botón de "Continuar al siguiente nivel"
     if (nextLevelButtonRef.current) {
       nextLevelButtonRef.current.focus();
     }
@@ -21,7 +20,7 @@ export default function LevelCompleteModal({ results, levels, onNextLevel, onRet
           <p>Precisión: <span>{results.accuracy}%</span></p>
           <p>{results.perfect ? "¡Perfecto!" : "¡Buen trabajo!"}</p>
         </div>
-        <LevelProgress currentLevel={results.currentLevel} levels={levels} />
+        <LevelProgress currentLevel={results.currentLevel} levels={levels} showLevelList={true} />
         <div className="modal-buttons">
           <button onClick={onRetryLevel} className="retry-level-button">
             Reintentar nivel
